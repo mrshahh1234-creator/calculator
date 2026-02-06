@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Roll Calculator</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text);
+            display: flex; justify-content: center; padding: 20px; 
+        }
+        .container { 
+            background: white; padding: 2rem; border-radius: 1rem; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); 
+            width: 100%; max-width: 450px; 
+        }
+        h2 { text-align: center; margin-top: 0; color: #0f172a; }
+        
+        .input-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        
+        input { 
+            width: 100%; padding: 12px; border: 2px solid #e2e8f0; 
+            border-radius: 8px; box-sizing: border-box; font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--primary); }
+
+        .presets { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+        .preset-btn { 
+            padding: 8px; background: #f1f5f9; border: 1px solid #cbd5e1; 
+            border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+        }
+        .preset-btn:hover { background: #e2e8f0; }
+
+        button.main-calc { 
+            width: 100%; padding: 14px; background-color: var(--primary); 
+            color: white; border: none; border-radius: 8px; 
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; 
+        }
+        button.main-calc:active { transform: scale(0.98); }
+
+        .result { 
+            margin-top: 1.5rem; padding: 1.5rem; background-color: #eff6ff; 
+            border-radius: 8px; text-align: center; border: 1px dashed var(--primary);
+        }
+        .result span { font-size: 2.5rem; font-weight: 800; color: var(--primary); display: block; }
+        .footer { text-align: center; font-size: 0.8rem; color: #94a3b8; margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📏 Остаток кромки</h2>
+    
+    <div class="input-group">
+        <label>Толщина кромки (мм)</label>
+        <div class="presets">
+            <button class="preset-btn" onclick="setT(0.4)">0.4 мм</button>
+            <button class="preset-btn" onclick="setT(1.0)">1.0 мм</button>
+            <button class="preset-btn" onclick="setT(2.0)">2.0 мм</button>
+        </div>
+        <input type="number" id="thickness" placeholder="Введите толщину" step="0.1">
+    </div>
+
+    <div class="input-group">
+        <label>Внешний диаметр (мм)</label>
+        <input type="number" id="outerD" placeholder="Например, 320">
+    </div>
+
+    <div class="input-group">
+        <label>Внутренняя втулка (мм)</label>
+        <input type="number" id="innerD" value="200">
+    </div>
+
+    <button class="main-calc" onclick="calculate()">Рассчитать метры</button>
+
+    <div class="result" id="resultBlock" style="display:none;">
+        Остаток в рулоне:
+        <span id="lengthResult">0</span>
+        <small>метров</small>
+    </div>
+
+    <div class="footer">
+        Расчёт по формуле спирали Архимеда
+    </div>
+</div>
+
+<script>
+    function setT(val) {
+        document.getElementById('thickness').value = val;
+    }
+
+    function calculate() {
+        const D = parseFloat(document.getElementById('outerD').value);
+        const d = parseFloat(document.getElementById('innerD').value);
+        const t = parseFloat(document.getElementById('thickness').value);
+        
+        if (D > d && t > 0) {
+            // Формула: L = (π * (D² - d²)) / (4000 * t)
+            const length = (Math.PI * (Math.pow(D, 2) - Math.pow(d, 2))) / (4000 * t);
+            
+            document.getElementById('lengthResult').innerText = Math.round(length);
+            document.getElementById('resultBlock').style.display = 'block';
+        } else {
+            alert("Проверьте введенные данные: внешний диаметр должен быть больше внутреннего.");
+        }
+    }
+</script>
+
+</body>
+</html>
